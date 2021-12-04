@@ -1,12 +1,9 @@
+import { ApiResponse, Client } from "@elastic/elasticsearch";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Client } from "@elastic/elasticsearch";
-
-const elasticSearchClient = new Client({ node: "http://localhost:9200" });
-
-type Data = {
-  name: string;
-};
+const elasticSearchClient = new Client({
+  node: process.env.ELASTIC_SEARCH_NODE,
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,18 +16,23 @@ export default async function handler(
   }
 
   try {
-    const result = await elasticSearchClient.search({
+    const { body, statusCode } = await elasticSearchClient.search({
       index: req.query.index_name,
     });
 
-    if (result.statusCode !== 200) {
-      res.status(Number(result?.statusCode)).json(result);
+    if (statusCode === 200) {
+      res.status(statusCode).json(body);
+      return;
+    }
+  } catch (error) {
+    const errorResponse = error as ApiResponse;
+
+    if (errorResponse.statusCode && errorResponse.body) {
+      res.status(errorResponse.statusCode).json(errorResponse.body);
       return;
     }
 
-    res.status(200).json(result);
-  } catch (error) {
-    const e = error as Error;
-    res.status(500).json({ error: e.message || "" });
+    console.error(error);
+    res.status(500).json({ error: "An unexpected error occured." });
   }
 }
