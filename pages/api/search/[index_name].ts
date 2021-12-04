@@ -7,26 +7,27 @@ const elasticSearchClient = new Client({
 
 export default async function ElasticSearchHandler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<ApiResponse | { error: string }>
 ) {
-  const { index_name } = req.query;
-  if (!index_name) {
-    res.status(400).json({ error: "index_name is required" });
-    return;
-  }
-
   try {
+    const {
+      index_name,
+      start_date,
+      end_date,
+      size = 500,
+      from = 0,
+    } = req.query;
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
-        from: 0,
-        size: 500,
+        from,
+        size,
         timeout: "5s",
         version: true,
         sort: [{ timestamp: { order: "desc", unmapped_type: "boolean" } }],
         _source: { excludes: [] },
         aggs: {
-          hits_hourly: {
+          hourly: {
             date_histogram: {
               field: "timestamp",
               calendar_interval: "1h",
@@ -49,8 +50,8 @@ export default async function ElasticSearchHandler(
                 range: {
                   timestamp: {
                     format: "strict_date_optional_time",
-                    gte: "2020-12-04T02:13:58.519Z",
-                    lte: "2021-12-04T02:13:58.519Z",
+                    gte: start_date,
+                    lte: end_date,
                   },
                 },
               },
@@ -74,7 +75,7 @@ export default async function ElasticSearchHandler(
       return;
     }
 
-    console.error(error);
+    console.error("ElasticSearchHandler error: ", error);
     res.status(500).json({ error: "An unexpected error occured." });
   }
 }

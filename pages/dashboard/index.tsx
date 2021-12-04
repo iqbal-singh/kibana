@@ -6,7 +6,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     async function getData() {
-      const response = await fetch("/api/search/kibana_sample_data_logs");
+      const response = await fetch(
+        "/api/search/kibana_sample_data_logs?start_date=2021-12-01T05:00:00.000Z&end_date=2021-12-03T05:00:00.000Z"
+      );
       const json = await response.json();
       setData(json);
       console.log(json);
