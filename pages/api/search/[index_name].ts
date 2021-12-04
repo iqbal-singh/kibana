@@ -5,9 +5,9 @@ const elasticSearchClient = new Client({
   node: process.env.ELASTIC_SEARCH_NODE,
 });
 
-export default async function handler(
+export default async function ElasticSearchHandler(
   req: NextApiRequest,
-  res: NextApiResponse<any>
+  res: NextApiResponse
 ) {
   const { index_name } = req.query;
   if (!index_name) {
@@ -17,10 +17,52 @@ export default async function handler(
 
   try {
     const { body, statusCode } = await elasticSearchClient.search({
-      index: req.query.index_name,
+      index: index_name,
+      body: {
+        from: 0,
+        size: 500,
+        timeout: "5s",
+        version: true,
+        sort: [{ timestamp: { order: "desc", unmapped_type: "boolean" } }],
+        _source: { excludes: [] },
+        aggs: {
+          hits_hourly: {
+            date_histogram: {
+              field: "timestamp",
+              calendar_interval: "1h",
+              time_zone: "America/New_York",
+              min_doc_count: 1,
+            },
+          },
+        },
+        docvalue_fields: [
+          { field: "@timestamp", format: "date_time" },
+          { field: "timestamp", format: "date_time" },
+          { field: "utc_time", format: "date_time" },
+        ],
+        query: {
+          bool: {
+            must: [],
+            filter: [
+              { match_all: {} },
+              {
+                range: {
+                  timestamp: {
+                    format: "strict_date_optional_time",
+                    gte: "2020-12-04T02:13:58.519Z",
+                    lte: "2021-12-04T02:13:58.519Z",
+                  },
+                },
+              },
+            ],
+            should: [],
+            must_not: [],
+          },
+        },
+      },
     });
 
-    if (statusCode === 200) {
+    if (statusCode) {
       res.status(statusCode).json(body);
       return;
     }
