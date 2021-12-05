@@ -10,13 +10,7 @@ export default async function ElasticSearchHandler(
   res: NextApiResponse<ApiResponse | { error: string }>
 ) {
   try {
-    const {
-      index_name,
-      start_date,
-      end_date,
-      size = 500,
-      from = 0,
-    } = req.query;
+    const { index_name, start_date, end_date, size = 500, from = 0 } = req.query;
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
