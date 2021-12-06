@@ -1,21 +1,27 @@
-import { Container } from '@mui/material';
-import { red } from '@mui/material/colors';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import DateFnsAdapter from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
-import Head from 'next/head';
-
+import Head from "next/head";
 
 const theme = createTheme({
+  shadows: ["none"],
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#07C",
     },
     secondary: {
-      main: "#19857b",
+      main: "#F04E98",
+    },
+    success: {
+      main: "#00BFB3",
+    },
+    warning: {
+      main: "#FEC514",
     },
     error: {
-      main: red.A400,
+      main: "#BD271E",
     },
   },
 });
@@ -36,11 +42,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <Container maxWidth="xl">
+        <LocalizationProvider dateAdapter={DateFnsAdapter}>
+          <CssBaseline />
+
           <Component {...pageProps} />
-        </Container>
+        </LocalizationProvider>
       </ThemeProvider>
     </>
   );

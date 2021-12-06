@@ -1,6 +1,6 @@
 import { ApiResponse, Client } from "@elastic/elasticsearch";
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import mock from "../../../_search";
 const elasticSearchClient = new Client({
   node: process.env.ELASTIC_SEARCH_NODE,
 });
@@ -9,8 +9,16 @@ export default async function ElasticSearchHandler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse | { error: string }>
 ) {
+  return res.status(200).json(mock);
+
   try {
-    const { index_name, start_date, end_date, size = 500, from = 0 } = req.query;
+    const {
+      index_name,
+      start_date,
+      end_date,
+      size = 500,
+      from = 0,
+    } = req.query;
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
