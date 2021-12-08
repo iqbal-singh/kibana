@@ -1,16 +1,13 @@
-import { ApiResponse, Client } from "@elastic/elasticsearch";
+import { ApiResponse, ApiError, errors, Client } from "@elastic/elasticsearch";
 import type { NextApiRequest, NextApiResponse } from "next";
-import mock from "../../../_search";
 const elasticSearchClient = new Client({
   node: process.env.ELASTIC_SEARCH_NODE,
 });
 
 export default async function ElasticSearchHandler(
   req: NextApiRequest,
-  res: NextApiResponse<ApiResponse | { error: string }>
+  res: NextApiResponse<any>
 ) {
-  return res.status(200).json(mock);
-
   try {
     const {
       index_name,
@@ -65,7 +62,7 @@ export default async function ElasticSearchHandler(
       },
     });
 
-    if (statusCode) {
+    if (statusCode && statusCode < 400) {
       res.status(statusCode).json(body);
       return;
     }
@@ -78,6 +75,7 @@ export default async function ElasticSearchHandler(
     }
 
     console.error("ElasticSearchHandler error: ", error);
+
     res.status(500).json({ error: "An unexpected error occured." });
   }
 }

@@ -4,14 +4,15 @@ type PanelProps = {
   data: any;
 };
 
-const Panel: React.FC<PanelProps> = ({ data }) => {
+const Panel: React.FunctionComponent<PanelProps> = ({ data }) => {
   return (
     <>
       <pre
         style={{
           overflow: "auto",
-          maxHeight: 600,
-          width: "100%",
+          maxHeight: 500,
+          maxWidth: "100%",
+          margin: "10px",
         }}
       >
         {JSON.stringify(data?._source, null, 2)}

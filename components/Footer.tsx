@@ -3,7 +3,7 @@ import React from "react";
 
 type FooterProps = {};
 
-const Footer: React.FC<FooterProps> = ({ children }) => {
+const Footer: React.FunctionComponent<FooterProps> = ({ children }) => {
   return (
     <>
       <div style={{ backgroundColor: "#ccc", padding: "20px" }}>

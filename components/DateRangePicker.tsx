@@ -20,7 +20,7 @@ type DateRangePickerProps = {
   onEndDateChange: DatePickerProps<Date>["onChange"];
 };
 
-const DateRangePicker: React.FC<DateRangePickerProps> = ({
+const DateRangePicker: React.FunctionComponent<DateRangePickerProps> = ({
   defaultStartDate,
   defaultEndDate,
   onStartDateChange,
@@ -37,7 +37,9 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   ) => {
     setStartDateError("");
     setEndDateError("");
-    setStartDate(date);
+    const start = date;
+    start?.setHours(0, 0, 0, 0);
+    setStartDate(start);
     onStartDateChange && onStartDateChange(date, _keyboardInputEventValue);
   };
 

@@ -17,9 +17,10 @@ type BarChartProps = {
   yAxisLabel: string;
   barColor: string;
   barStroke: string;
+  formatDate: (date: Date) => string;
 };
 
-const BarChart: React.FC<BarChartProps> = ({
+const BarChart: React.FunctionComponent<BarChartProps> = ({
   data,
   xAxisKey,
   xAxisLabel,
@@ -27,18 +28,19 @@ const BarChart: React.FC<BarChartProps> = ({
   yAxisLabel,
   barColor,
   barStroke,
+  formatDate,
 }) => {
   return (
     <>
-      <ResponsiveContainer width="100%" height={250} debounce={100}>
+      <ResponsiveContainer width="100%" height={250}>
         <_BarChart
           data={data}
           margin={{ top: 20, right: 20, left: 20, bottom: 40 }}
         >
           <XAxis
             dataKey={xAxisKey}
-            tickFormatter={(value, index) =>
-              value ? new Date(value)?.toLocaleString() : "Invalid Date"
+            tickFormatter={(value, _index) =>
+              value ? formatDate(new Date(value)) : "Invalid Date"
             }
           >
             <Label value={xAxisLabel} offset={-20} position="insideBottom" />
