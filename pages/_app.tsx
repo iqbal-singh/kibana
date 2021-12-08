@@ -4,9 +4,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
+const queryClient = new QueryClient();
 const theme = createTheme({
-  shadows: ["none"],
   palette: {
     primary: {
       main: "#07C",
@@ -41,13 +43,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
       </Head>
-      <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={DateFnsAdapter}>
-          <CssBaseline />
-
-          <Component {...pageProps} />
-        </LocalizationProvider>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <LocalizationProvider dateAdapter={DateFnsAdapter}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </LocalizationProvider>
+        </ThemeProvider>
+        <ReactQueryDevtools initialIsOpen />
+      </QueryClientProvider>
     </>
   );
 }
