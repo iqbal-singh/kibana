@@ -16,6 +16,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@/types/*": ["types/*"],
+      "@/hooks/*": ["hooks/*"],
       "@/components/*": ["components/*"],
       "@/constants/*": ["constants/*"],
       "@/utils/*": ["utils/*"]

@@ -1,23 +1,15 @@
-import DatePicker, { DatePickerProps } from "@mui/lab/DatePicker";
-
+import { formatDate } from "@/utils/index";
 import { Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 
-const ERROR_MESSAGES = {
-  shouldDisableDate: "Date should be disabled",
-  disablePast: "Date should be in the future",
-  disableFuture: "Date should be in the past",
-  minDate: "Date should be after start date",
-  maxDate: "Date should be before end date",
-  invalidDate: "Date is invalid",
-};
+import type { StandardTextFieldProps } from "@mui/material";
 
 type DateRangePickerProps = {
-  defaultStartDate: Date | null;
-  defaultEndDate: Date | null;
-
-  onStartDateChange: DatePickerProps<Date>["onChange"];
-  onEndDateChange: DatePickerProps<Date>["onChange"];
+  defaultStartDate: Date;
+  defaultEndDate: Date;
+  disabled: boolean;
+  onStartDateChange: (date: Date) => void;
+  onEndDateChange: (date: Date) => void;
 };
 
 const DateRangePicker: React.FunctionComponent<DateRangePickerProps> = ({
@@ -25,88 +17,47 @@ const DateRangePicker: React.FunctionComponent<DateRangePickerProps> = ({
   defaultEndDate,
   onStartDateChange,
   onEndDateChange,
+  disabled,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(defaultStartDate);
-  const [endDate, setEndDate] = useState<Date | null>(defaultEndDate);
-  const [startDateError, setStartDateError] = useState("");
-  const [endDateError, setEndDateError] = useState("");
+  const [startDate, setStartDate] = useState<Date>(defaultStartDate);
+  const [endDate, setEndDate] = useState<Date>(defaultEndDate);
 
-  const handleStartDateChange = (
-    date: Date | null,
-    _keyboardInputEventValue?: string | undefined
-  ) => {
-    setStartDateError("");
-    setEndDateError("");
-    const start = date;
-    start?.setHours(0, 0, 0, 0);
-    setStartDate(start);
-    onStartDateChange && onStartDateChange(date, _keyboardInputEventValue);
+  const handleStartDateChange: StandardTextFieldProps["onChange"] = (e) => {
+    const date = new Date(e.target.value + "T00:00:00");
+    setStartDate(date);
+    onStartDateChange && onStartDateChange(date);
   };
 
-  const handleEndDateChange = (
-    date: Date | null,
-    _keyboardInputEventValue?: string | undefined
-  ) => {
-    setStartDateError("");
-    setEndDateError("");
+  const handleEndDateChange: StandardTextFieldProps["onChange"] = (e) => {
+    const date = new Date(e.target.value + "T23:59:59");
     setEndDate(date);
-    onEndDateChange && onEndDateChange(date, _keyboardInputEventValue);
+    onEndDateChange && onEndDateChange(date);
   };
 
-  const handleStartDateError: DatePickerProps<Date>["onError"] = (
-    reason,
-    _value
-  ) => {
-    if (!reason) return;
-    setStartDateError(ERROR_MESSAGES[reason] ?? "Invalid date");
-  };
-
-  const handleEndDateError: DatePickerProps<Date>["onError"] = (
-    reason,
-    _value
-  ) => {
-    if (!reason) return;
-    setEndDateError(ERROR_MESSAGES[reason] ?? "Invalid Date");
-  };
   return (
     <Grid container columnSpacing={1}>
       <Grid item xs={6}>
-        <DatePicker
-          renderInput={(props) => (
-            <TextField
-              {...props}
-              size="small"
-              fullWidth
-              variant="standard"
-              helperText={startDateError || " "}
-            />
-          )}
+        <TextField
+          type="date"
+          size="small"
+          fullWidth
+          variant="standard"
+          disabled={disabled}
           label="Start Date"
-          value={startDate}
-          clearable={false}
+          value={formatDate(startDate, "yyyy-MM-dd")}
           onChange={handleStartDateChange}
-          onError={handleStartDateError}
-          reduceAnimations
         />
       </Grid>
       <Grid item xs={6}>
-        <DatePicker
-          renderInput={(props) => (
-            <TextField
-              {...props}
-              size="small"
-              fullWidth
-              variant="standard"
-              helperText={endDateError || " "}
-            />
-          )}
+        <TextField
+          type="date"
+          size="small"
+          fullWidth
+          variant="standard"
+          disabled={disabled}
           label="End Date"
-          value={endDate}
-          clearable={false}
+          value={formatDate(endDate, "yyyy-MM-dd")}
           onChange={handleEndDateChange}
-          onError={handleEndDateError}
-          reduceAnimations
-          minDate={startDate ? new Date(startDate) : undefined}
         />
       </Grid>
     </Grid>

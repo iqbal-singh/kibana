@@ -16,6 +16,7 @@ export default async function ElasticSearchHandler(
       size = 500,
       from = 0,
     } = req.query;
+    console.log("searching", index_name, start_date, end_date, size, from);
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
