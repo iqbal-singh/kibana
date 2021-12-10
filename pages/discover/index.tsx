@@ -9,9 +9,15 @@ import {
   DEFAULT_END_DATE,
   DEFAULT_START_DATE,
   MAX_DOCUMENTS_SIZE,
-  SAMPLE_DATA_ELASTIC_SEARCH_INDEX_NAME,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_INDEX_NAME,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_TABLE_COLUMNS,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_XAXIS_KEY,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_XAXIS_LABEL,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_YAXIS_KEY,
+  SAMPLE_DATA_LOGS_ELASTIC_SEARCH_YAXIS_LABEL,
 } from "@/constants/index";
-import { useElasticSearchData } from "@/hooks/index";
+import { search, useElasticSearchData } from "@/hooks/index";
+import type { ElasticSearchResponse } from "@/types/index";
 import { formatDate, isValidDate } from "@/utils/index";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -19,13 +25,30 @@ import { Container, Grid, LinearProgress } from "@mui/material";
 import type { NextPage } from "next";
 import { useState } from "react";
 
-type DiscoverPageProps = {};
+export const getServerSideProps = async () => {
+  const data = await search(
+    SAMPLE_DATA_LOGS_ELASTIC_SEARCH_INDEX_NAME,
+    MAX_DOCUMENTS_SIZE,
+    DEFAULT_START_DATE,
+    DEFAULT_END_DATE
+  );
+  return {
+    props: {
+      initialData: data,
+    },
+  };
+};
 
-const DiscoverPage: NextPage<DiscoverPageProps> = () => {
+type DiscoverPageProps = {
+  initialData: ElasticSearchResponse;
+};
+
+const DiscoverPage: NextPage<DiscoverPageProps> = ({ initialData }) => {
   const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
   const [endDate, setEndDate] = useState<Date>(DEFAULT_END_DATE);
   const { data, isLoading, isFetching, error, refetch } = useElasticSearchData({
-    indexName: SAMPLE_DATA_ELASTIC_SEARCH_INDEX_NAME,
+    initialData,
+    indexName: SAMPLE_DATA_LOGS_ELASTIC_SEARCH_INDEX_NAME,
     resultSize: MAX_DOCUMENTS_SIZE,
     startDate,
     endDate,
@@ -35,10 +58,9 @@ const DiscoverPage: NextPage<DiscoverPageProps> = () => {
     <>
       <Grid container>
         <Grid item xs={12} style={{ height: "10px" }}>
-          {isLoading ||
-            (isFetching && (
-              <LinearProgress color="secondary" variant="query" />
-            ))}
+          {(isLoading || isFetching) && (
+            <LinearProgress color="secondary" variant="query" />
+          )}
         </Grid>
       </Grid>
       <Container maxWidth="xl">
@@ -74,21 +96,25 @@ const DiscoverPage: NextPage<DiscoverPageProps> = () => {
           startDate={startDate}
           endDate={endDate}
         >
-          <BarChart
-            data={data?.aggregations?.hourly?.buckets as any[]}
-            xAxisKey="key_as_string"
-            yAxisKey="doc_count"
-            xAxisLabel="Timestamp per hour"
-            yAxisLabel="Count"
-            barColor={BAR_CHART_FILL}
-            barStroke={BAR_CHART_STROKE}
-            formatDate={(date) =>
-              isValidDate(date)
-                ? formatDate(date, "yyyy-MM-dd HH:mm")
-                : "Invalid Date"
-            }
+          {data?.aggregations &&
+            data?.aggregations?.hourly?.buckets?.length > 0 && (
+              <BarChart
+                data={data?.aggregations?.hourly?.buckets as any[]}
+                xAxisKey={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_XAXIS_KEY}
+                yAxisKey={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_YAXIS_KEY}
+                xAxisLabel={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_XAXIS_LABEL}
+                yAxisLabel={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_YAXIS_LABEL}
+                barColor={BAR_CHART_FILL}
+                barStroke={BAR_CHART_STROKE}
+                formatDate={(date) =>
+                  isValidDate(date) ? formatDate(date, "yyyy-MM-dd HH:mm") : ""
+                }
+              />
+            )}
+          <DocumentTable
+            columns={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_TABLE_COLUMNS}
+            data={data?.hits?.hits ?? []}
           />
-          <DocumentTable data={data?.hits?.hits ?? []} />
           <DocumentTableFooter>
             {data && data?.hits?.total?.value > MAX_DOCUMENTS_SIZE && (
               <>

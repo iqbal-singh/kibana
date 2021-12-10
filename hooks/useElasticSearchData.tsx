@@ -3,13 +3,6 @@ import { API_BASE_URL } from "@/constants/index";
 import type { ElasticSearchResponse } from "@/types/index";
 import type { UseQueryResult } from "react-query";
 
-type useElasticSearchDataProps = {
-  indexName: string;
-  startDate: Date;
-  endDate: Date;
-  resultSize: number;
-};
-
 const search = async (
   indexName: string,
   resultSize: number,
@@ -28,11 +21,20 @@ const search = async (
   return await res.json();
 };
 
+type useElasticSearchDataProps = {
+  indexName: string;
+  startDate: Date;
+  endDate: Date;
+  resultSize: number;
+  initialData?: ElasticSearchResponse;
+};
+
 const useElasticSearchData = ({
   indexName,
   resultSize,
   startDate,
   endDate,
+  initialData,
 }: useElasticSearchDataProps): UseQueryResult<ElasticSearchResponse, Error> => {
   return useQuery<ElasticSearchResponse, Error>(
     ["search", startDate, endDate],
@@ -42,6 +44,7 @@ const useElasticSearchData = ({
       staleTime: 90000,
       keepPreviousData: true,
       retry: false,
+      initialData,
     }
   );
 };

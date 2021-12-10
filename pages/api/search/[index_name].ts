@@ -1,12 +1,17 @@
-import { ApiResponse, ApiError, errors, Client } from "@elastic/elasticsearch";
+import { Client } from "@elastic/elasticsearch";
+import type { ApiError } from "@elastic/elasticsearch";
 import type { NextApiRequest, NextApiResponse } from "next";
+
 const elasticSearchClient = new Client({
   node: process.env.ELASTIC_SEARCH_NODE,
 });
 
+/**
+ *  ElasticSearch API /_search/index_name endpoint
+ */
 export default async function ElasticSearchHandler(
   req: NextApiRequest,
-  res: NextApiResponse<any>
+  res: NextApiResponse
 ) {
   try {
     const {
@@ -16,7 +21,13 @@ export default async function ElasticSearchHandler(
       size = 500,
       from = 0,
     } = req.query;
-    console.log("searching", index_name, start_date, end_date, size, from);
+    console.log("ElasticSearchHandler: searching for ", {
+      index_name,
+      start_date,
+      end_date,
+      size,
+      from,
+    });
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
@@ -68,15 +79,9 @@ export default async function ElasticSearchHandler(
       return;
     }
   } catch (error) {
-    const errorResponse = error as ApiResponse;
+    const errorResponse = error as ApiError;
+    console.error("ElasticSearchHandler Error ", error);
 
-    if (errorResponse.statusCode && errorResponse.body) {
-      res.status(errorResponse.statusCode).json(errorResponse.body);
-      return;
-    }
-
-    console.error("ElasticSearchHandler error: ", error);
-
-    res.status(500).json({ error: "An unexpected error occured." });
+    res.status(500).json(errorResponse);
   }
 }
