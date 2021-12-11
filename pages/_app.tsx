@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </LocalizationProvider>
         </ThemeProvider>
-        <ReactQueryDevtools initialIsOpen />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );

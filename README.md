@@ -1,14 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Kibana Clone
 
 ## Getting Started
 
-First, run the development server:
+1. Install Docker
+2. Clone the repository
+3. Run “docker-compose up -d” to install ElasticSearch and Kibana
+4. Install sample data “Sample web logs”
+
+To run a production build locally:
 
 ```bash
-npm run dev
-# or
+yarn start
+```
+
+To run the development server:
+
+```bash
 yarn dev
 ```
+
+To run tests:
+
+```bash
+yarn test
+```
+
+---
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

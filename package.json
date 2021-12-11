@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next build & next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --watch"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.4.0",
@@ -15,6 +16,7 @@
     "@mui/icons-material": "^5.2.0",
     "@mui/lab": "^5.0.0-alpha.58",
     "@mui/material": "^5.2.2",
+    "@testing-library/react-hooks": "^7.0.2",
     "date-fns": "^2.27.0",
     "next": "12.0.4",
     "react": "17.0.2",
@@ -23,10 +25,14 @@
     "recharts": "^2.1.6"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
     "@types/node": "16.11.11",
     "@types/react": "17.0.37",
     "eslint": "7",
     "eslint-config-next": "12.0.4",
+    "jest": "27.3.1",
+    "react-test-renderer": "^17.0.2",
     "typescript": "4.5.2"
   }
 }

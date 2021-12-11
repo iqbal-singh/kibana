@@ -111,6 +111,7 @@ const DiscoverPage: NextPage<DiscoverPageProps> = ({ initialData }) => {
                 }
               />
             )}
+          {error && <p>Error: {JSON.stringify(error)}</p>}
           <DocumentTable
             columns={SAMPLE_DATA_LOGS_ELASTIC_SEARCH_TABLE_COLUMNS}
             data={data?.hits?.hits ?? []}

@@ -21,13 +21,7 @@ export default async function ElasticSearchHandler(
       size = 500,
       from = 0,
     } = req.query;
-    console.log("ElasticSearchHandler: searching for ", {
-      index_name,
-      start_date,
-      end_date,
-      size,
-      from,
-    });
+
     const { body, statusCode } = await elasticSearchClient.search({
       index: index_name,
       body: {
@@ -74,7 +68,7 @@ export default async function ElasticSearchHandler(
       },
     });
 
-    if (statusCode && statusCode < 400) {
+    if (statusCode) {
       res.status(statusCode).json(body);
       return;
     }
