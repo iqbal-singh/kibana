@@ -1,4 +1,5 @@
 # Kibana Clone
+### Iqbal Singh
 
 ## Getting Started
 
@@ -6,6 +7,8 @@
 2. Clone the repository
 3. Run “docker-compose up -d” to install ElasticSearch and Kibana
 4. Install sample data “Sample web logs”
+5. Navigate to Open [http://localhost:3000/discover](http://localhost:3000/discover)
+
 
 To run a production build locally:
 
