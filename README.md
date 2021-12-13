@@ -4,15 +4,25 @@
 
 1. Install Docker
 2. Clone the repository
-3. Run npm install to install project dependencies
+3. Run npm install
 3. Run “docker-compose up -d” to install ElasticSearch and Kibana
-4. Install sample data “Sample web logs”
-5. Create a env.local file with an elastic search url ex. http://localhost:9200
+4. Install kibana sample data “Sample web logs”
+5. Create a env.local file that with `ELASTIC_SEARCH_NODE` set to your elastic search node url:
+    Example:
+    ```
+    ELASTIC_SEARCH_NODE=http://localhost:9200
+    ```
 
 To run the development server:
 
 ```bash
 npm run dev
+```
+
+To run a production build locally:
+
+```bash
+npm run start
 ```
 
 To run tests:
