@@ -1,5 +1,13 @@
 # Kibana Clone
 
+![](screen.gif)
+
+## Built With
+ - Next.js
+ - Material UI
+ - react-query
+ - recharts
+
 ## Getting Started
 
 1. Install Docker
